@@ -330,7 +330,102 @@ class FaithCSimplifyMesh:
         mesh_copy.vertices = new_vertices
         mesh_copy.faces = new_faces
         
-        return (mesh_copy, )         
+        return (mesh_copy, )       
+
+class FaithCProcessMeshWithVoxel:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "mesh": ("MESHWITHVOXEL",),
+                "resolution": ([64,128,256,512,1024,2048],{"default":512}),
+                "device": (["cpu","cuda"],{"default":"cuda"}),
+                "verbose": ("BOOLEAN",{"default":False}),
+                "compute_flux": ("BOOLEAN",{"default":True}),
+                "clamp_anchors": ("BOOLEAN",{"default":True}), 
+                "tri_mode": (['auto', 'simple_02', 'simple_13', 'length', 'angle', 'normal', 'normal_abs'],{"default":"auto"}),                
+            },
+        }
+
+    RETURN_TYPES = ("MESHWITHVOXEL",)
+    RETURN_NAMES = ("mesh",)
+    FUNCTION = "process"
+    CATEGORY = "FaithCWrapper"
+    OUTPUT_NODE = True
+
+    def process(self, mesh, resolution, device, verbose, compute_flux, clamp_anchors, tri_mode):
+        print('Normalize mesh ...')
+        trimesh = Trimesh.Trimesh(mesh.vertices.cpu().numpy(), mesh.faces.cpu().numpy())
+        trimesh = normalize_mesh(trimesh)
+        
+        print('Preprocess mesh ...')
+        orig_faces = len(trimesh.faces)
+        valid_mask = trimesh.nondegenerate_faces()
+        if valid_mask.sum() < orig_faces:
+            trimesh.update_faces(valid_mask)
+            trimesh.remove_unreferenced_vertices()
+            print(f"   ⚠️  Removed {orig_faces - len(trimesh.faces)} degenerate faces")        
+        
+        max_level = int(math.log2(resolution))
+        min_level = min(4, max(1, max_level - 1))
+        
+        vertices = torch.tensor(trimesh.vertices, dtype=torch.float32, device=device)
+        faces = torch.tensor(trimesh.faces, dtype=torch.long, device=device)
+        
+        print(f"\n🔧 Building spatial structures...")
+        bvh = MeshBVH(vertices, faces)
+        
+        grid_bounds = torch.tensor([[-1.0, -1.0, -1.0], [1.0, 1.0, 1.0]], device=device)
+        octree = OctreeIndexer(max_level=max_level, bounds=grid_bounds, device=device)
+        print(f"   • OctreeIndexer initialized (res={octree.res}, bounds=[-1, 1]^3)")        
+        
+        # --- FCT Encoding ---
+        print(f"\n🔄 FCT Encoding...")        
+        encoder = FCTEncoder(bvh, octree, device=device)        
+        
+        time_start = time.time()
+        with SuppressPrint(turn_stdout=not verbose):
+            solver_weights = {
+                'lambda_n': 1.0,
+                'lambda_d': 1e-3,
+                'weight_power': 1
+            }
+            fct_result = encoder.encode(
+                min_level=min_level,
+                solver_weights=solver_weights,
+                compute_flux=compute_flux,
+                clamp_anchors=clamp_anchors
+            )
+        time_encode = time.time() - time_start        
+        
+        print(f"   ✅ Encoding completed in {time_encode:.3f}s")
+        print(f"   • Active voxels: {fct_result.active_voxel_indices.shape[0]}")
+        print(f"   • Anchor shape: {fct_result.anchor.shape}")
+        print(f"   • Normal shape: {fct_result.normal.shape}")
+        print(f"   • Edge flux shape: {fct_result.edge_flux_sign.shape}") 
+        
+        print(f"\n🔄 FCT Decoding (tri_mode={tri_mode})...")        
+        decoder = FCTDecoder(resolution=resolution, bounds=grid_bounds, device=device)
+        
+        time_start = time.time()
+        decoded_mesh = decoder.decode(
+            active_voxel_indices=fct_result.active_voxel_indices,
+            anchors=fct_result.anchor,
+            edge_flux_sign=fct_result.edge_flux_sign,
+            normals=fct_result.normal,
+            triangulation_mode=tri_mode
+        )
+        time_decode = time.time() - time_start    
+
+        print(f"   ✅ Decoding completed in {time_decode:.3f}s")
+        print(f"   • Generated vertices: {decoded_mesh.vertices.shape[0]}")
+        print(f"   • Generated faces: {decoded_mesh.faces.shape[0]}")        
+        
+        mesh_copy = copy.deepcopy(mesh)
+        mesh_copy.vertices = decoded_mesh.vertices.float()
+        mesh_copy.faces = decoded_mesh.faces.int()
+        
+        return (mesh_copy, )            
 
 NODE_CLASS_MAPPINGS = {
     "FaithCLoadMesh": FaithCLoadMesh,
@@ -340,6 +435,7 @@ NODE_CLASS_MAPPINGS = {
     "FaithCDecodeMesh": FaithCDecodeMesh,
     "FaithCExportMesh": FaithCExportMesh,
     "FaithCSimplifyMesh": FaithCSimplifyMesh,
+    "FaithCProcessMeshWithVoxel": FaithCProcessMeshWithVoxel,
     }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -350,4 +446,5 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "FaithCDecodeMesh": "FaithC - Decode Mesh",
     "FaithCExportMesh": "FaithC - Export Mesh",
     "FaithCSimplifyMesh": "FaithC - Simplify Mesh",
+    "FaithCProcessMeshWithVoxel": "FaithC - Process Mesh with Voxel",
     }        
