@@ -1,0 +1,6 @@
+torch
+trimesh
+numpy
+scipy
+torch_scatter
+einops

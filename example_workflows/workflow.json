@@ -1,0 +1,596 @@
+{
+  "id": "9b564f0e-30d6-4f9b-a473-4a0d72dce294",
+  "revision": 0,
+  "last_node_id": 10,
+  "last_link_id": 12,
+  "nodes": [
+    {
+      "id": 2,
+      "type": "FaithCNormalizeMesh",
+      "pos": [
+        1876.9034420582332,
+        1038.1328675747877
+      ],
+      "size": [
+        393.15625,
+        79.328125
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "trimesh",
+          "type": "TRIMESH",
+          "link": 2
+        }
+      ],
+      "outputs": [
+        {
+          "name": "trimesh",
+          "type": "TRIMESH",
+          "links": [
+            3
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "visualbruno/ComfyUI-FaithContouring",
+        "ver": "unknown",
+        "Node name for S&R": "FaithCNormalizeMesh",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        0.05
+      ]
+    },
+    {
+      "id": 4,
+      "type": "FaithCDecodeMesh",
+      "pos": [
+        1720.038868420073,
+        1250.6775796402749
+      ],
+      "size": [
+        476.34375,
+        174
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "grid_bounds",
+          "type": "GRID_BOUNDS",
+          "link": 6
+        },
+        {
+          "name": "fct_result",
+          "type": "FCT_RESULT",
+          "link": 7
+        },
+        {
+          "name": "resolution",
+          "type": "INT",
+          "widget": {
+            "name": "resolution"
+          },
+          "link": 5
+        },
+        {
+          "name": "device",
+          "type": "STRING",
+          "widget": {
+            "name": "device"
+          },
+          "link": 8
+        }
+      ],
+      "outputs": [
+        {
+          "name": "trimesh",
+          "type": "TRIMESH",
+          "links": [
+            11
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "visualbruno/ComfyUI-FaithContouring",
+        "ver": "unknown",
+        "Node name for S&R": "FaithCDecodeMesh",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        "auto",
+        "",
+        "auto"
+      ]
+    },
+    {
+      "id": 5,
+      "type": "FaithCEncodeMesh",
+      "pos": [
+        1283.6226387310635,
+        1242.2885642917279
+      ],
+      "size": [
+        324,
+        272.65625
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "trimesh",
+          "type": "TRIMESH",
+          "link": 4
+        }
+      ],
+      "outputs": [
+        {
+          "name": "resolution",
+          "type": "INT",
+          "links": [
+            5
+          ]
+        },
+        {
+          "name": "grid_bounds",
+          "type": "GRID_BOUNDS",
+          "links": [
+            6
+          ]
+        },
+        {
+          "name": "fct_result",
+          "type": "FCT_RESULT",
+          "links": [
+            7
+          ]
+        },
+        {
+          "name": "device",
+          "type": "STRING",
+          "links": [
+            8
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "visualbruno/ComfyUI-FaithContouring",
+        "ver": "unknown",
+        "Node name for S&R": "FaithCEncodeMesh",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        512,
+        "cuda",
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "id": 3,
+      "type": "FaithCPreProcessMesh",
+      "pos": [
+        2365.3320905671194,
+        1039.1806323720198
+      ],
+      "size": [
+        399.9375,
+        47.328125
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "trimesh",
+          "type": "TRIMESH",
+          "link": 3
+        }
+      ],
+      "outputs": [
+        {
+          "name": "trimesh",
+          "type": "TRIMESH",
+          "links": [
+            4
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "visualbruno/ComfyUI-FaithContouring",
+        "ver": "unknown",
+        "Node name for S&R": "FaithCPreProcessMesh",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 1,
+      "type": "FaithCLoadMesh",
+      "pos": [
+        1254.2749428133675,
+        1034.8804988688548
+      ],
+      "size": [
+        481.1875,
+        83.328125
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "trimesh",
+          "type": "TRIMESH",
+          "links": [
+            2
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "visualbruno/ComfyUI-FaithContouring",
+        "ver": "unknown",
+        "Node name for S&R": "FaithCLoadMesh",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        "C:\\Git\\ComfyUI\\output\\OrcWarrior_WhiteMesh_00001_.glb"
+      ]
+    },
+    {
+      "id": 7,
+      "type": "FaithCExportMesh",
+      "pos": [
+        2647.0508642137556,
+        1256.6896306737258
+      ],
+      "size": [
+        341,
+        146
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "trimesh",
+          "type": "TRIMESH",
+          "link": 12
+        }
+      ],
+      "outputs": [
+        {
+          "name": "glb_path",
+          "type": "STRING",
+          "links": [
+            10
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "visualbruno/ComfyUI-FaithContouring",
+        "ver": "unknown",
+        "Node name for S&R": "FaithCExportMesh",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        "FaithC",
+        "glb",
+        true
+      ]
+    },
+    {
+      "id": 8,
+      "type": "Preview3D",
+      "pos": [
+        1773.0001954573004,
+        1502.0491713668089
+      ],
+      "size": [
+        979.53125,
+        868.46875
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "camera_info",
+          "shape": 7,
+          "type": "LOAD3D_CAMERA",
+          "link": null
+        },
+        {
+          "name": "bg_image",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "name": "model_file",
+          "type": "STRING",
+          "widget": {
+            "name": "model_file"
+          },
+          "link": 10
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.9.2",
+        "Node name for S&R": "Preview3D",
+        "widget_ue_connectable": {},
+        "Last Time Model File": "FaithC_00005_.glb",
+        "Scene Config": {
+          "showGrid": true,
+          "backgroundColor": "#282828",
+          "backgroundImage": "",
+          "backgroundRenderMode": "tiled"
+        },
+        "Camera Config": {
+          "cameraType": "perspective",
+          "fov": 35,
+          "state": {
+            "position": {
+              "x": -4.720865740848151,
+              "y": 4.306708932731054,
+              "z": 9.333082518744403
+            },
+            "target": {
+              "x": 0,
+              "y": 2.494647797800954,
+              "z": 0
+            },
+            "zoom": 1,
+            "cameraType": "perspective"
+          }
+        },
+        "Light Config": {
+          "intensity": 3
+        },
+        "Model Config": {
+          "upDirection": "original",
+          "materialMode": "original"
+        }
+      },
+      "widgets_values": [
+        "FaithC_00005_.glb",
+        ""
+      ]
+    },
+    {
+      "id": 9,
+      "type": "Load3D",
+      "pos": [
+        4240.943472690645,
+        1645.9158928540664
+      ],
+      "size": [
+        1097.8125,
+        1091
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": null
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "links": null
+        },
+        {
+          "name": "mesh_path",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "normal",
+          "type": "IMAGE",
+          "links": null
+        },
+        {
+          "name": "camera_info",
+          "type": "LOAD3D_CAMERA",
+          "links": null
+        },
+        {
+          "name": "recording_video",
+          "type": "VIDEO",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Resource Folder": "",
+        "cnr_id": "comfy-core",
+        "ver": "0.9.2",
+        "Node name for S&R": "Load3D",
+        "widget_ue_connectable": {},
+        "Camera Config": {
+          "cameraType": "perspective",
+          "fov": 75,
+          "state": {
+            "position": {
+              "x": -0.8638703887452749,
+              "y": 2.7327565193427055,
+              "z": 10.044402792146546
+            },
+            "target": {
+              "x": -0.06320578229551661,
+              "y": 2.446166643725074,
+              "z": -0.0038134387902867876
+            },
+            "zoom": 1,
+            "cameraType": "perspective"
+          }
+        }
+      },
+      "widgets_values": [
+        "3d/Orc_512.glb",
+        null,
+        "uploadExtraResources",
+        "clear",
+        "",
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": 10,
+      "type": "FaithCSimplifyMesh",
+      "pos": [
+        2229.5464474592945,
+        1293.4744961239908
+      ],
+      "size": [
+        384.53125,
+        79.328125
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "trimesh",
+          "type": "TRIMESH",
+          "link": 11
+        }
+      ],
+      "outputs": [
+        {
+          "name": "trimesh",
+          "type": "TRIMESH",
+          "links": [
+            12
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "visualbruno/ComfyUI-FaithContouring",
+        "ver": "unknown",
+        "Node name for S&R": "FaithCSimplifyMesh",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        2000000
+      ]
+    }
+  ],
+  "links": [
+    [
+      2,
+      1,
+      0,
+      2,
+      0,
+      "TRIMESH"
+    ],
+    [
+      3,
+      2,
+      0,
+      3,
+      0,
+      "TRIMESH"
+    ],
+    [
+      4,
+      3,
+      0,
+      5,
+      0,
+      "TRIMESH"
+    ],
+    [
+      5,
+      5,
+      0,
+      4,
+      2,
+      "INT"
+    ],
+    [
+      6,
+      5,
+      1,
+      4,
+      0,
+      "GRID_BOUNDS"
+    ],
+    [
+      7,
+      5,
+      2,
+      4,
+      1,
+      "FCT_RESULT"
+    ],
+    [
+      8,
+      5,
+      3,
+      4,
+      3,
+      "STRING"
+    ],
+    [
+      10,
+      7,
+      0,
+      8,
+      2,
+      "STRING"
+    ],
+    [
+      11,
+      4,
+      0,
+      10,
+      0,
+      "TRIMESH"
+    ],
+    [
+      12,
+      10,
+      0,
+      7,
+      0,
+      "TRIMESH"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ue_links": [],
+    "workflowRendererVersion": "Vue",
+    "ds": {
+      "scale": 0.4778762424730671,
+      "offset": [
+        -659.7869780330334,
+        -707.8982820606864
+      ]
+    },
+    "links_added_by_ue": [],
+    "frontendVersion": "1.36.14",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4
+}
