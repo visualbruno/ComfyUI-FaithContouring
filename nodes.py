@@ -3,6 +3,7 @@ import sys
 import math
 import time
 import contextlib
+import copy
 
 import torch
 import trimesh as Trimesh
@@ -136,9 +137,11 @@ class FaithCNormalizeMesh:
     CATEGORY = "FaithCWrapper"
 
     def process(self, trimesh, margin):
-        trimesh = normalize_mesh(trimesh, margin)
+        mesh_copy = copy.deepcopy(trimesh)
         
-        return (trimesh,)  
+        mesh_copy = normalize_mesh(mesh_copy, margin)
+        
+        return (mesh_copy,)  
 
 class FaithCPreProcessMesh:
     @classmethod
@@ -155,14 +158,16 @@ class FaithCPreProcessMesh:
     CATEGORY = "FaithCWrapper"
 
     def process(self, trimesh):
-        orig_faces = len(trimesh.faces)
-        valid_mask = trimesh.nondegenerate_faces()
-        if valid_mask.sum() < orig_faces:
-            trimesh.update_faces(valid_mask)
-            trimesh.remove_unreferenced_vertices()
-            print(f"   ⚠️  Removed {orig_faces - len(trimesh.faces)} degenerate faces")
+        mesh_copy = copy.deepcopy(trimesh)
         
-        return (trimesh,)     
+        orig_faces = len(mesh_copy.faces)
+        valid_mask = mesh_copy.nondegenerate_faces()
+        if valid_mask.sum() < orig_faces:
+            mesh_copy.update_faces(valid_mask)
+            mesh_copy.remove_unreferenced_vertices()
+            print(f"   ⚠️  Removed {orig_faces - len(mesh_copy.faces)} degenerate faces")
+        
+        return (mesh_copy,)     
 
 class FaithCEncodeMesh:
     @classmethod
@@ -320,11 +325,12 @@ class FaithCSimplifyMesh:
     OUTPUT_NODE = True
 
     def process(self, trimesh, target_face_num,):
-        new_vertices, new_faces = simplify_with_meshlib(vertices = trimesh.vertices, faces = trimesh.faces, target = target_face_num)
-        trimesh.vertices = new_vertices
-        trimesh.faces = new_faces
+        mesh_copy = copy.deepcopy(trimesh)
+        new_vertices, new_faces = simplify_with_meshlib(vertices = mesh_copy.vertices, faces = mesh_copy.faces, target = target_face_num)
+        mesh_copy.vertices = new_vertices
+        mesh_copy.faces = new_faces
         
-        return (trimesh, )         
+        return (mesh_copy, )         
 
 NODE_CLASS_MAPPINGS = {
     "FaithCLoadMesh": FaithCLoadMesh,
