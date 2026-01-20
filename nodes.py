@@ -309,7 +309,7 @@ class FaithCSimplifyMesh:
         return {
             "required": {
                 "trimesh": ("TRIMESH",),
-                "target_face_num": ("INT",{"default":2000000}),
+                "target_face_num": ("INT",{"default":2000000,"min":1,"max":20000000}),
             },
         }
 
